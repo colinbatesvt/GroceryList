@@ -1,4 +1,4 @@
-package com.colinbatesvt.grocerylist;
+package com.github.colinbatesvt.grocerylist;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
