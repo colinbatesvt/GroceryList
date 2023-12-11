@@ -1,6 +1,7 @@
 package com.github.colinbatesvt.grocerylist.model.GroceryList;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
+@Getter @Setter @NoArgsConstructor
 @Document("grocerylists")
 public class GroceryList {
 
@@ -22,11 +23,8 @@ public class GroceryList {
     private String name;
     private String createdBy;
     private LocalDateTime createdOn;
+    private LocalDateTime lastUpdatedOn;
     private List<GroceryListItem> items;
-
-    public GroceryList() {
-        this.name = "";
-    }
 
     public GroceryList(String name, String createdBy) {
         super();
@@ -34,10 +32,7 @@ public class GroceryList {
         this.name = name;
         this.createdBy = createdBy;
         this.createdOn = LocalDateTime.now();
+        this.lastUpdatedOn = LocalDateTime.now();
         this.items = new ArrayList<>();
-    }
-
-    public void addItem(GroceryListItem item) {
-        this.items.add(item);
     }
 }

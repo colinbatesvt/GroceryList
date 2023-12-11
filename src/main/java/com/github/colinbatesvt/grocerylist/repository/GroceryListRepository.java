@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface GroceryListRepository extends MongoRepository<GroceryList, String> {
+public interface GroceryListRepository extends MongoRepository<GroceryList, Long> {
 
     @Query("{createdBy:'?0'}")
     List<GroceryList> findListsByUserName(String userName);

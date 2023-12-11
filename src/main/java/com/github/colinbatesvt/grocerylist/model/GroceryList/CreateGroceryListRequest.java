@@ -1,15 +1,11 @@
 package com.github.colinbatesvt.grocerylist.model.GroceryList;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter @Setter
+@Getter @Setter @AllArgsConstructor
 public class CreateGroceryListRequest {
     public String listName;
     public String userName;
-
-    public CreateGroceryListRequest(String listName, String userName) {
-        this.listName = listName;
-        this.userName = userName;
-    }
 }

@@ -1,13 +1,13 @@
 package com.github.colinbatesvt.grocerylist.controller;
 
-import com.github.colinbatesvt.grocerylist.model.GroceryList.AddListItemRequest;
-import com.github.colinbatesvt.grocerylist.model.GroceryList.CreateGroceryListRequest;
-import com.github.colinbatesvt.grocerylist.model.GroceryList.GroceryList;
-import com.github.colinbatesvt.grocerylist.model.GroceryList.GroceryListDto;
+import com.github.colinbatesvt.grocerylist.model.GroceryList.*;
 import com.github.colinbatesvt.grocerylist.repository.GroceryListRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,48 +23,55 @@ public class GroceryListController {
         this.mapper = new ModelMapper();
     }
 
-    @GetMapping("/api/getListsForUser/{userName}")
-    List<GroceryListDto> getList(@PathVariable String userName) {
-        List<GroceryList> userLists = repository.findListsByUserName(userName);
-        return userLists.stream().map(list -> {
-            return new GroceryListDto(
-                    list.getId(),
-                    list.getName(),
-                    list.getCreatedBy(),
-                    list.getCreatedOn(),
-                    list.getItems()
-            );
-        }).collect(Collectors.toList());
-    }
-
-    @GetMapping("/api/getList/{id}")
+    @GetMapping("/api/groceryLists/{id}")
     GroceryListDto getList(@PathVariable Long id) {
         Optional<GroceryList> list = repository.findListById(id);
 
         if(list.isPresent()) {
-            return new GroceryListDto(
-                    list.get().getId(),
-                    list.get().getName(),
-                    list.get().getCreatedBy(),
-                    list.get().getCreatedOn(),
-                    list.get().getItems()
-            );
+            return new GroceryListDto(list.get());
         } else {
-            return new GroceryListDto();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
         }
     }
 
-    @PostMapping("/api/createGroceryList")
-    void create(@RequestBody CreateGroceryListRequest request) {
-        repository.save(new GroceryList(request.getListName(), request.getUserName()));
+    @GetMapping("/api/groceryLists")
+    List<GroceryListDto> getList(@RequestParam Optional<String> userName) {
+        if(userName.isPresent()) {
+            List<GroceryList> userLists = repository.findListsByUserName(userName.get());
+            return userLists.stream().map(GroceryListDto::new).collect(Collectors.toList());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "entity not found");
+        }
     }
 
-    @PostMapping("/api/addItem")
-    void addItem(@RequestBody AddListItemRequest request) {
-        Optional<GroceryList> list = repository.findListById(request.listId);
-        if(list.isPresent()) {
-            list.get().addItem(request.item);
-            repository.save(list.get());
+    @PutMapping("/api/groceryLists")
+    GroceryListDto putList(@RequestBody CreateGroceryListRequest request) {
+        GroceryList groceryList = new GroceryList(request.getListName(), request.getUserName());
+        repository.save(groceryList);
+        return new GroceryListDto(groceryList);
+    }
+
+    @PatchMapping("/api/groceryLists/{id}")
+    GroceryListDto updateList(@PathVariable Long id, @RequestBody UpdateGroceryListRequest request) {
+        Optional<GroceryList> groceryListOptional = repository.findListById(id);
+        if(groceryListOptional.isPresent()) {
+            GroceryList groceryList = groceryListOptional.get();
+            if(request.getName() != null) {
+                groceryList.setName(request.getName());
+            }
+            if(request.getItems() != null) {
+                groceryList.setItems(request.getItems());
+            }
+            groceryList.setLastUpdatedOn(LocalDateTime.now());
+            repository.save(groceryList);
+            return new GroceryListDto(groceryList);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No grocery list found with id="+id);
         }
+    }
+
+    @DeleteMapping("/api/groceryLists/{listId}")
+    void deleteList(@PathVariable Long listId) {
+        repository.deleteById(listId);
     }
 }

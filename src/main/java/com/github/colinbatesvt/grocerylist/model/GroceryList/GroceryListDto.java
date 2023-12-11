@@ -15,6 +15,7 @@ public class GroceryListDto {
     private String name;
     private String createdBy;
     private LocalDateTime createdOn;
+    private LocalDateTime lastUpdatedOn;
     private List<GroceryListItem> items;
 
     public GroceryListDto() {
@@ -22,15 +23,17 @@ public class GroceryListDto {
         this.name = "";
         this.createdBy = "";
         this.createdOn = LocalDateTime.MIN;
+        this.lastUpdatedOn = LocalDateTime.MIN;
         this.items = new ArrayList<>();
     }
 
-    public GroceryListDto(Long id, String name, String createdBy, LocalDateTime createdOn, List<GroceryListItem> items) {
-        this.id = id;
-        this.name = name;
-        this.createdBy = createdBy;
-        this.createdOn = createdOn;
-        this.items = items;
+    public GroceryListDto(GroceryList list) {
+        this.id = list.getId();
+        this.name = list.getName();
+        this.createdBy = list.getCreatedBy();
+        this.createdOn = list.getCreatedOn();
+        this.lastUpdatedOn = list.getLastUpdatedOn();
+        this.items = list.getItems();
     }
 
 }
