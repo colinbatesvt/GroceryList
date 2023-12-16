@@ -1,7 +1,9 @@
 package com.github.colinbatesvt.grocerylist.service;
 
+import com.github.colinbatesvt.grocerylist.model.auth.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                         new UsernameNotFoundException("User not found with username or email: "+ usernameOrEmail));
 
         Set<GrantedAuthority> authorities = new HashSet<>();
-        AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER");
+        authorities.add(new SimpleGrantedAuthority(Role.ROLE_USER.toString()));
 
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(),

@@ -35,4 +35,12 @@ public class GroceryList {
         this.lastUpdatedOn = LocalDateTime.now();
         this.items = new ArrayList<>();
     }
+
+    public void addItem (GroceryListItem item) {
+        this.items.add(item);
+    }
+
+    public void removeItem(int index) {
+        this.items.remove(index);
+    }
 }
