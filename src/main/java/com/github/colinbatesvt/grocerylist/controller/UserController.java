@@ -15,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -55,15 +56,17 @@ public class UserController {
         return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
     }
 
-    @GetMapping("/user")
+    @GetMapping("")
     public User getCurrentUser() {
         User userInfo = null;
         SecurityContext securityContext = SecurityContextHolder.getContext();
         if (securityContext != null && null != securityContext.getAuthentication()) {
-            Object principal = securityContext.getAuthentication().getPrincipal();
-            if (User.class.isAssignableFrom(principal.getClass())) {
-                userInfo = (User) principal;
-            }
+            String principal =  (String)securityContext.getAuthentication().getPrincipal();
+
+            userInfo = userRepository.findByUsername(principal).orElseThrow(() ->
+                    new UsernameNotFoundException("You are not currently logged in"));
+            //TODO: should have a DTO with no pword field. Don't want to send this back
+            userInfo.setPassword("");
         }
         return userInfo;
     }
