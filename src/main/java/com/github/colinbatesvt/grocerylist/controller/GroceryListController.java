@@ -83,12 +83,12 @@ public class GroceryListController {
     }
 
     @PostMapping("/api/groceryLists/{listId}/removeItem")
-    GroceryListDto removeItem(@PathVariable Long listId, @RequestBody int itemIndex) {
+    GroceryListDto removeItem(@PathVariable Long listId, @RequestBody RemoveGroceryListItemRequest request) {
         Optional<GroceryList> groceryListOptional = repository.findListById(listId);
         if(groceryListOptional.isPresent()) {
             GroceryList groceryList = groceryListOptional.get();
             groceryList.setLastUpdatedOn(LocalDateTime.now());
-            groceryList.removeItem(itemIndex);
+            groceryList.removeItem(request.index);
             repository.save(groceryList);
             return new GroceryListDto(groceryList);
         } else {
