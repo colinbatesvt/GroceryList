@@ -39,7 +39,7 @@ public class GroceryListController {
         return userLists.stream().map(GroceryListDto::new).collect(Collectors.toList());
     }
 
-    @PutMapping("/api/groceryLists")
+    @PostMapping("/api/groceryLists/create")
     GroceryListDto putList(@RequestBody CreateGroceryListRequest request) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         GroceryList groceryList = new GroceryList(request.getListName(), userName);
