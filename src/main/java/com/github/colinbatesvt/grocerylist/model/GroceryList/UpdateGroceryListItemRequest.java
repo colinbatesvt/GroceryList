@@ -5,10 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter @Setter
-@AllArgsConstructor @NoArgsConstructor
-public class GroceryListItem {
-    private String name;
-    private boolean checked;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class UpdateGroceryListItemRequest {
+    private int index;
+    private GroceryListItem item;
 }
-

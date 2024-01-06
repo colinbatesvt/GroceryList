@@ -43,4 +43,6 @@ public class GroceryList {
     public void removeItem(int index) {
         this.items.remove(index);
     }
+
+    public void updateItem(int index, GroceryListItem item) { this.items.set(index, item); }
 }

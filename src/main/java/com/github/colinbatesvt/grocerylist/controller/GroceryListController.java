@@ -75,8 +75,8 @@ public class GroceryListController {
             GroceryList groceryList = groceryListOptional.get();
             groceryList.setLastUpdatedOn(LocalDateTime.now());
             groceryList.addItem(item);
-            repository.save(groceryList);
-            return new GroceryListDto(groceryList);
+            GroceryList updatedList = repository.save(groceryList);
+            return new GroceryListDto(updatedList);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No grocery list found with id="+listId);
         }
@@ -88,9 +88,23 @@ public class GroceryListController {
         if(groceryListOptional.isPresent()) {
             GroceryList groceryList = groceryListOptional.get();
             groceryList.setLastUpdatedOn(LocalDateTime.now());
-            groceryList.removeItem(request.index);
-            repository.save(groceryList);
-            return new GroceryListDto(groceryList);
+            groceryList.removeItem(request.getIndex());
+            GroceryList updatedList = repository.save(groceryList);
+            return new GroceryListDto(updatedList);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No grocery list found with id="+listId);
+        }
+    }
+
+    @PostMapping("/api/groceryLists/{listId}/updateItem")
+    GroceryListDto updateItem(@PathVariable Long listId, @RequestBody UpdateGroceryListItemRequest request) {
+        Optional<GroceryList> groceryListOptional = repository.findListById(listId);
+        if(groceryListOptional.isPresent()) {
+            GroceryList groceryList = groceryListOptional.get();
+            groceryList.setLastUpdatedOn(LocalDateTime.now());
+            groceryList.updateItem(request.getIndex(), request.getItem());
+            GroceryList updatedList = repository.save(groceryList);
+            return new GroceryListDto(updatedList);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No grocery list found with id="+listId);
         }

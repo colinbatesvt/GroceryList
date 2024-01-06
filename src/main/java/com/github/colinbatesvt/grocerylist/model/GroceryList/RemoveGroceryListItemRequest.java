@@ -10,5 +10,5 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RemoveGroceryListItemRequest {
-    public int index;
+    private int index;
 }
