@@ -1,9 +1,6 @@
 package com.github.colinbatesvt.grocerylist.controller;
 
-import com.github.colinbatesvt.grocerylist.model.auth.Role;
-import com.github.colinbatesvt.grocerylist.model.auth.User;
-import com.github.colinbatesvt.grocerylist.model.auth.LoginDto;
-import com.github.colinbatesvt.grocerylist.model.auth.SignUpDto;
+import com.github.colinbatesvt.grocerylist.model.auth.*;
 import com.github.colinbatesvt.grocerylist.repository.UserRepository;
 import com.github.colinbatesvt.grocerylist.service.UserService;
 import lombok.AllArgsConstructor;
@@ -57,16 +54,17 @@ public class UserController {
     }
 
     @GetMapping("")
-    public User getCurrentUser() {
-        User userInfo = null;
+    public UserDto getCurrentUser() {
+        UserDto userInfo = null;
         SecurityContext securityContext = SecurityContextHolder.getContext();
         if (securityContext != null && null != securityContext.getAuthentication()) {
             String principal =  (String)securityContext.getAuthentication().getPrincipal();
 
-            userInfo = userRepository.findByUsername(principal).orElseThrow(() ->
+            User user = userRepository.findByUsername(principal).orElseThrow(() ->
                     new UsernameNotFoundException("You are not currently logged in"));
-            //TODO: should have a DTO with no pword field. Don't want to send this back
-            userInfo.setPassword("");
+            userInfo = new UserDto();
+            userInfo.setUsername(user.getUsername());
+            userInfo.setEmail(user.getEmail());
         }
         return userInfo;
     }

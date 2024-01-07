@@ -8,6 +8,7 @@ import com.github.colinbatesvt.grocerylist.security.SecurityConstants;
 import com.github.colinbatesvt.grocerylist.security.manager.CustomAuthenticationManager;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -53,6 +54,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .withSubject(authResult.getName())
                 .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION))
                 .sign(Algorithm.HMAC512(secretKey));
-        response.addHeader(SecurityConstants.AUTHORIZATION, SecurityConstants.BEARER + token);
+        Cookie authCookie = new Cookie(SecurityConstants.ACCESS_TOKEN, token);
+        authCookie.setMaxAge(86400);
+        //TODO: this should be config based (in prod use correct domain)
+        authCookie.setDomain("localhost");
+        authCookie.setPath("/");
+        authCookie.setHttpOnly(true);
+        response.addCookie(authCookie);
     }
 }

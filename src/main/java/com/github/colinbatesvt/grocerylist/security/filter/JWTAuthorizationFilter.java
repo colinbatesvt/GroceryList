@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.github.colinbatesvt.grocerylist.security.SecurityConstants;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,13 +27,20 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
+        String token = null;
 
-        if(header == null || !header.startsWith(SecurityConstants.BEARER)) {
+        if(request.getCookies() != null){
+            for(Cookie cookie: request.getCookies()){
+                if(cookie.getName().equals(SecurityConstants.ACCESS_TOKEN)){
+                    token = cookie.getValue();
+                }
+            }
+        }
+
+        if(token == null){
             filterChain.doFilter(request, response);
             return;
         }
-        String token = header.replace(SecurityConstants.BEARER, "");
         String user = JWT.require(Algorithm.HMAC512(secretKey))
                 .build()
                 .verify(token)
