@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter @Setter @NoArgsConstructor
 @Document("grocerylists")
@@ -44,5 +45,15 @@ public class GroceryList {
         this.items.remove(index);
     }
 
-    public void updateItem(int index, GroceryListItem item) { this.items.set(index, item); }
+    public void updateItem(int index, GroceryListItem item) {
+        this.items.set(index, item);
+    }
+
+    public void removeCheckedItems() {
+        this.items = this.items.stream().filter(item -> !item.isChecked()).collect(Collectors.toList());
+    }
+
+    public void removeAllItems() {
+        this.items = new ArrayList<>();
+    }
 }

@@ -109,4 +109,32 @@ public class GroceryListController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No grocery list found with id="+listId);
         }
     }
+
+    @PostMapping("/api/groceryLists/{listId}/removeCheckedItems")
+    GroceryListDto removeCheckedItems(@PathVariable Long listId) {
+        Optional<GroceryList> groceryListOptional = repository.findListById(listId);
+        if(groceryListOptional.isPresent()) {
+            GroceryList groceryList = groceryListOptional.get();
+            groceryList.setLastUpdatedOn(LocalDateTime.now());
+            groceryList.removeCheckedItems();
+            GroceryList updatedList = repository.save(groceryList);
+            return new GroceryListDto(updatedList);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No grocery list found with id="+listId);
+        }
+    }
+
+    @PostMapping("/api/groceryLists/{listId}/removeAllItems")
+    GroceryListDto removeAllItems(@PathVariable Long listId) {
+        Optional<GroceryList> groceryListOptional = repository.findListById(listId);
+        if(groceryListOptional.isPresent()) {
+            GroceryList groceryList = groceryListOptional.get();
+            groceryList.setLastUpdatedOn(LocalDateTime.now());
+            groceryList.removeAllItems();
+            GroceryList updatedList = repository.save(groceryList);
+            return new GroceryListDto(updatedList);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No grocery list found with id="+listId);
+        }
+    }
 }
