@@ -33,7 +33,7 @@ public class GroceryListController {
     }
 
     @GetMapping("/api/groceryLists")
-    List<GroceryListDto> getList() {
+    List<GroceryListDto> getLists() {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         List<GroceryList> userLists = repository.findListsByUserName(userName);
         return userLists.stream().map(GroceryListDto::new).collect(Collectors.toList());
